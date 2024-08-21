@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - BOT_TOKEN=secret
+      - ADMIN_ID=secret
+      - MONGODB_HOST=mongodb
+      - MONGODB_PORT=27017
+      - MONGODB_NAME=ProdDatabase
+      - REDIS_URL=redis://redis:6379/0
+      - REDIS_HOST=redis
+    depends_on:
+      - mongodb
+      - redis
+    links:
+      - mongodb
+      - redis
+
+  mongodb:
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: ProdDatabase
+    ports:
+      - "${MONGODB_PORT}:27017"
+
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
